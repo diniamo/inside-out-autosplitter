@@ -4,7 +4,7 @@ state("InsideOut") {}
 
 startup
 {
-	vars.Dbg = (Action<dynamic>) ((output) => print("[Inside|Out ASL] " + output));
+	vars.Dbg = (Action<dynamic>) ((output) => print("[Inside | Out ASL] " + output));
 
 
 	settings.Add("seasons", false, "Season Splits");
