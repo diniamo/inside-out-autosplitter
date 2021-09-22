@@ -7,15 +7,7 @@ startup
 	vars.Dbg = (Action<dynamic>) ((output) => print("[Inside|Out ASL] " + output));
 
 
-	settings.Add("items", true, "Item Splits");
 	settings.Add("seasons", false, "Season Splits");
-
-	settings.Add("lightbulb", true, "Split on lightbulb pick up", "items");
-	settings.Add("corkscrew", true, "Split on corkscrew pick up", "items");
-	settings.Add("laser", true, "Split on laser pick up", "items");
-	settings.Add("mushroom", true, "Split on mushroom pick up", "items");
-	settings.Add("snowglobe", true, "Split on snowglobe pick up", "items");
-	settings.Add("propeller", true, "Split on propeller pick up", "items");
 
 	settings.Add("dry", false, "Split on dry season change", "seasons");
 	settings.Add("green", false, "Split on green season change", "seasons");
@@ -27,8 +19,7 @@ init
 	{
 		{ "GameManager", IntPtr.Zero },
 		{ "PauseMenu", IntPtr.Zero },
-		{ "FPSController", IntPtr.Zero },
-		{ "ItemInteractionAfterFocus", IntPtr.Zero }
+		{ "FPSController", IntPtr.Zero }
 	};
 
 	vars.CancelSource = new CancellationTokenSource();
@@ -89,13 +80,6 @@ init
 			{
 				vars.Watchers = new MemoryWatcherList
 				{
-					new MemoryWatcher<bool>(new DeepPointer(CLASSES["ItemInteractionAfterFocus"], 0x18)) { Name = "lightbulbPicked" },
-					new MemoryWatcher<bool>(new DeepPointer(CLASSES["ItemInteractionAfterFocus"], 0x19)) { Name = "corkscrewPicked" },
-					new MemoryWatcher<bool>(new DeepPointer(CLASSES["ItemInteractionAfterFocus"], 0x1a)) { Name = "laserPicked" },
-					new MemoryWatcher<bool>(new DeepPointer(CLASSES["ItemInteractionAfterFocus"], 0x1b)) { Name = "mushroomPicked" },
-					new MemoryWatcher<bool>(new DeepPointer(CLASSES["ItemInteractionAfterFocus"], 0x1c)) { Name = "snowglobePicked" },
-					new MemoryWatcher<bool>(new DeepPointer(CLASSES["ItemInteractionAfterFocus"], 0x1d)) { Name = "propellerPicked" },
-
 					new MemoryWatcher<bool>(new DeepPointer(CLASSES["GameManager"], 0x18)) { Name = "isDrySeason" },
                     new MemoryWatcher<bool>(new DeepPointer(CLASSES["GameManager"], 0x19)) { Name = "isGreenSeason" },
                     //new MemoryWatcher<bool>(new DeepPointer(CLASSES["GameManager"], 0x1a)) { Name = "isSnowSeason" },
@@ -147,39 +131,15 @@ start
 
 split
 {
-	if(settings["items"])
-	{
-		if(!vars.Watchers["lightbulbPicked"].Old && settings["lightbulb"] && vars.Watchers["lightbulbPicked"].Current)
-		{
-			vars.Dbg("Splitting on lightbulb");
-			return true;
-		} else if(!vars.Watchers["corkscrewPicked"].Old && settings["corkscrew"] && vars.Watchers["corkscrewPicked"].Current)
-		{
-			vars.Dbg("Splitting on corkscrew");
-			return true;
-		} else if(!vars.Watchers["laserPicked"].Old && settings["laser"] && vars.Watchers["laserPicked"].Current)
-		{
-			vars.Dbg("Splitting on laser");
-			return true;
-		} else if(!vars.Watchers["mushroomPicked"].Old && settings["mushroom"] && vars.Watchers["mushroomPicked"].Current)
-		{
-			vars.Dbg("Splitting on mushroom");
-			return true;
-		} else if(!vars.Watchers["snowglobePicked"].Old && settings["snowglobe"] && vars.Watchers["snowglobePicked"].Current)
-		{
-			vars.Dbg("Splitting on snowglobe");
-			return true;
-		} else if(!vars.Watchers["propellerPicked"].Old && settings["propeller"] && vars.Watchers["propellerPicked"].Current)
-		{
-			vars.Dbg("Splitting on propeller");
-			return true;
-		}
-	}
+	var cp = vars.Watchers["canPause"];
+	print("old: " + cp.Old + "   curr: " + cp.Current + "   changd: " + cp.Changed);
 
 	if(settings["seasons"])
 	{
-		return (settings["dry"] && vars.Watchers["isDrySeason"].Changed) || (settings["green"] && vars.Watchers["isGreenSeason"].Changed);
+		return (settings["dry"] && vars.Watchers["isDrySeason"].Changed) || (settings["green"] && vars.Watchers["isGreenSeason"].Changed)
+			|| vars.Watchers["canPause"].Changed;
+	} else
+	{
+		return vars.Watchers["canPause"].Changed;
 	}
-
-	return vars.Watchers["canPause"].Changed;
 }
