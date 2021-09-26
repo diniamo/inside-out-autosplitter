@@ -69,8 +69,8 @@ init
 				string name = new DeepPointer(klass + 0x10, 0x0).DerefString(game, 64);
 				if (!CLASSES.Keys.Contains(name)) continue;
 
-				CLASSES[name] = game.ReadPointer(klass + 0xB8);
-				vars.Dbg("Found '" + name + "' at 0x" + CLASSES[name].ToString("X") + ".");
+				CLASSES[name] = klass;
+				vars.Dbg("Found '" + name + "' at 0x" + klass.ToString("X") + ".");
 
 				if (allFound = CLASSES.Values.All(ptr => ptr != IntPtr.Zero))
 					break;
@@ -80,12 +80,12 @@ init
 			{
 				vars.Watchers = new MemoryWatcherList
 				{
-					new MemoryWatcher<bool>(new DeepPointer(CLASSES["GameManager"], 0x18)) { Name = "isDrySeason" },
-                    new MemoryWatcher<bool>(new DeepPointer(CLASSES["GameManager"], 0x19)) { Name = "isGreenSeason" },
-                    //new MemoryWatcher<bool>(new DeepPointer(CLASSES["GameManager"], 0x1a)) { Name = "isSnowSeason" },
+					new MemoryWatcher<bool>(new DeepPointer(CLASSES["GameManager"] + 0xB8, 0x0, 0x18)) { Name = "isDrySeason" },
+					new MemoryWatcher<bool>(new DeepPointer(CLASSES["GameManager"] + 0xB8, 0x0, 0x19)) { Name = "isGreenSeason" },
+					//new MemoryWatcher<bool>(new DeepPointer(CLASSES["GameManager"] + 0xB8, 0x0, 0x1a)) { Name = "isSnowSeason" },
 
-                    new MemoryWatcher<bool>(new DeepPointer(CLASSES["FPSController"], 0x18)) { Name = "canMove" },
-                    new MemoryWatcher<bool>(new DeepPointer(CLASSES["PauseMenu"], 0x19)) { Name = "canPause" }
+					new MemoryWatcher<bool>(new DeepPointer(CLASSES["FPSController"] + 0xB8, 0x0, 0x18)) { Name = "canMove" },
+					new MemoryWatcher<bool>(new DeepPointer(CLASSES["PauseMenu"] + 0xB8, 0x0, 0x19)) { Name = "canPause" }
 				};
 
 				vars.Dbg("All classes found.");
