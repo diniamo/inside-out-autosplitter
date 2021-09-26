@@ -134,9 +134,6 @@ start
 
 split
 {
-	var cp = vars.Watchers["canPause"];
-	print("old: " + cp.Old + "   curr: " + cp.Current + "   changd: " + cp.Changed);
-
 	if(settings["seasons"])
 	{
 		return (settings["dry"] && vars.Watchers["isDrySeason"].Changed) || (settings["green"] && vars.Watchers["isGreenSeason"].Changed)
