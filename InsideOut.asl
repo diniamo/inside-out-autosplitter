@@ -19,7 +19,8 @@ init
 	{
 		{ "GameManager", IntPtr.Zero },
 		{ "PauseMenu", IntPtr.Zero },
-		{ "FPSController", IntPtr.Zero }
+		{ "FPSController", IntPtr.Zero },
+		{ "MainMenu", IntPtr.Zero }
 	};
 
 	vars.CancelSource = new CancellationTokenSource();
@@ -84,6 +85,8 @@ init
                     new MemoryWatcher<bool>(new DeepPointer(CLASSES["GameManager"], 0x19)) { Name = "isGreenSeason" },
                     //new MemoryWatcher<bool>(new DeepPointer(CLASSES["GameManager"], 0x1a)) { Name = "isSnowSeason" },
 
+					new MemoryWatcher<bool>(new DeepPointer(CLASSES["MainMenu"], 0x40)) { Name = "isFading" },
+
                     new MemoryWatcher<bool>(new DeepPointer(CLASSES["FPSController"], 0x18)) { Name = "canMove" },
                     new MemoryWatcher<bool>(new DeepPointer(CLASSES["PauseMenu"], 0x19)) { Name = "canPause" }
 				};
@@ -107,6 +110,9 @@ update
 	if (vars.ScanThread.IsAlive) return false;
 
 	vars.Watchers.UpdateAll(game);
+
+	var fade = vars.Watchers["isFading"];
+	print("old: " + fade.Old + "   curr: " + fade.Current + "   changd: " + fade.Changed);
 }
 
 exit
