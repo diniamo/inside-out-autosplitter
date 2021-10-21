@@ -9,7 +9,7 @@ startup
 {
 	vars.Dbg = (Action<dynamic>) ((output) => print("[Inside | Out ASL] " + output));
 
-	settings.Add("items", true, "Item Splits");
+	settings.Add("items", true, "Item Splits (Version 1.3 and above)");
 	settings.Add("seasons", false, "Season Splits");
 
 	settings.Add("lightbulb", true, "Split on lightbulb pickup", "items");
@@ -158,18 +158,18 @@ split
 		var sg = vars.Watchers["snowglobePicked"];
 		var pp = vars.Watchers["propellerPicked"];
 
-		return (lb.Old == false && lb.Current == true) ||
+		if( (lb.Old == false && lb.Current == true) ||
 			(cs.Old == false && cs.Current == true) ||
 			  (l.Old == false && l.Current == true) ||
 			(mr.Old == false && mr.Current == true) ||
 			(sg.Old == false && sg.Current == true) ||
-			(pp.Old == false && pp.Current == true);
+			(pp.Old == false && pp.Current == true) ) return true;
 	}
 
 	if(settings["seasons"])
 	{
-		return (settings["dry"] && vars.Watchers["isDrySeason"].Changed) || (settings["green"] && vars.Watchers["isGreenSeason"].Changed)
-			|| vars.Watchers["canPause"].Changed;
+		if( (settings["dry"] && vars.Watchers["isDrySeason"].Changed) || (settings["green"] && vars.Watchers["isGreenSeason"].Changed)
+			|| vars.Watchers["canPause"].Changed ) return true;
 	}
 
 	return vars.Watchers["canPause"].Changed;
